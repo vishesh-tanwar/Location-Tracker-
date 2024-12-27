@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_project2/map_screen.dart';
+import 'package:flutter_project2/map_screen3.dart'; 
+import 'package:flutter_project2/map_screen2.dart';
 import 'member.dart';
 
 class AttendanceScreen extends StatelessWidget {
-  // Create a global key to control the Scaffold
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey, // Assign the global key to the Scaffold
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           'Attendance',
@@ -17,9 +18,9 @@ class AttendanceScreen extends StatelessWidget {
         ),
         backgroundColor: const Color.fromARGB(255, 72, 29, 201),
         leading: IconButton(
-          icon: Icon(Icons.menu), // Three-line menu icon
+          icon: Icon(Icons.menu),
           onPressed: () {
-            _scaffoldKey.currentState?.openDrawer(); // Open the drawer
+            _scaffoldKey.currentState?.openDrawer();
           },
         ),
       ),
@@ -37,7 +38,7 @@ class AttendanceScreen extends StatelessWidget {
                   CircleAvatar(
                     radius: 30,
                     child: Text(
-                      "C", // Placeholder for user profile image or initials
+                      "C",
                       style: TextStyle(fontSize: 24, color: Colors.white),
                     ),
                   ),
@@ -56,67 +57,51 @@ class AttendanceScreen extends StatelessWidget {
             ListTile(
               leading: Icon(Icons.timer),
               title: Text('Timer'),
-              onTap: () {
-                // Handle navigation
-              },
+              onTap: () {},
             ),
             ListTile(
               leading: Icon(Icons.calendar_today),
               title: Text('Attendance'),
               onTap: () {
-                Navigator.pop(context); // Close the drawer
+                Navigator.pop(context);
               },
             ),
             ListTile(
               leading: Icon(Icons.bar_chart),
               title: Text('Activity'),
-              onTap: () {
-                // Handle navigation
-              },
+              onTap: () {},
             ),
             ListTile(
               leading: Icon(Icons.timer_outlined),
               title: Text('Timesheet'),
-              onTap: () {
-                // Handle logout
-              },
+              onTap: () {},
             ),
             ListTile(
               leading: Icon(Icons.assessment),
               title: Text('Report'),
-              onTap: () {
-                // Handle logout
-              },
+              onTap: () {},
             ),
             ListTile(
               leading: Icon(Icons.location_on),
               title: Text('Jobsite'),
-              onTap: () {
-                // Handle logout
-              },
+              onTap: () {},
             ),
             ListTile(
               leading: Icon(Icons.group),
               title: Text('Team'),
-              onTap: () {
-                // Handle logout
-              },
+              onTap: () {},
             ),
             ListTile(
               leading: Icon(Icons.access_time),
               title: Text('Time off'),
-              onTap: () {
-                // Handle logout
-              },
+              onTap: () {},
             ),
             ListTile(
               leading: Icon(Icons.schedule),
               title: Text('Schedules'),
-              onTap: () {
-                // Handle logout
-              },
+              onTap: () {},
             ),
-            Divider(), // Line added after Schedules
+            Divider(),
             ListTile(
               leading: Icon(Icons.how_to_reg),
               title: Text('Request to Join Organisation'),
@@ -138,7 +123,7 @@ class AttendanceScreen extends StatelessWidget {
                 // Handle logout
               },
             ),
-            Divider(), // Line added after Logout
+            Divider(), 
             ListTile(
               leading: Icon(Icons.help),
               title: Text('FAQ & Help'),
@@ -166,10 +151,36 @@ class AttendanceScreen extends StatelessWidget {
       body: ListView.builder(
         itemCount: fakeMembers.length,
         itemBuilder: (context, index) {
+          if (index == 0) {
+            // "All Members" row
+            return Container(
+              color: Colors.grey[200],
+              child: ListTile(
+                leading: Icon(
+                  Icons.groups,
+                ),
+                title: Text(
+                  "All Members",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          AllMembersScreen(), 
+                    ),
+                  );
+                },
+              ),
+            );
+          }  
           final member = fakeMembers[index];
-          return ListTile(
+          return ListTile( 
             leading: CircleAvatar(
-              child: Text(member.name[0]), // Placeholder for profile image
+              backgroundImage: AssetImage(
+                  member.imageAssetPath), 
+              radius: 20, 
             ),
             title: Text('${member.name} (${member.id})'),
             subtitle: Column(
@@ -180,16 +191,30 @@ class AttendanceScreen extends StatelessWidget {
               ],
             ),
             trailing: Row(
-              mainAxisSize: MainAxisSize
-                  .min, // Ensures the Row takes only as much space as its children
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.calendar_today, color: const Color.fromARGB(255, 96, 39, 176)), // First icon
-                SizedBox(width: 8), // Spacing between icons
-                // Icon(Icons.my_location, color: Colors.orange), // Second icon
+                IconButton(
+                  icon: Icon(Icons.calendar_today,
+                      color: const Color.fromARGB(255, 96, 39, 176)),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MapScreen2(
+                          name: member.name,
+                          latitude: member.latitude, 
+                          longitude: member.longitude,
+                          visitedPlaces:
+                              member.visitedPlaces, 
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(width: 8),
                 IconButton(
                   icon: Icon(Icons.my_location, color: Colors.orange),
                   onPressed: () {
-                    // Navigate to the MapScreen with the member's location data
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -202,7 +227,109 @@ class AttendanceScreen extends StatelessWidget {
                     );
                   },
                 ),
-              ], 
+              ],
+            ),
+          );
+        },
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MapScreen3(
+                  members: fakeMembers, 
+                ),
+              ),
+            );
+          },
+          child: Text('Show All Members on Map'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 251, 232, 254),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AllMembersScreen extends StatefulWidget {
+  @override
+  _AllMembersScreenState createState() => _AllMembersScreenState();
+}
+
+class _AllMembersScreenState extends State<AllMembersScreen> {
+  List<Member> filteredMembers = fakeMembers;
+  TextEditingController _searchController = TextEditingController();
+
+  void _filterMembers(String query) {
+    setState(() {
+      filteredMembers = fakeMembers.where((member) {
+        return member.name.toLowerCase().contains(query.toLowerCase()) ||
+            member.id.toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      _filterMembers(_searchController.text);
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Members"),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(56.0),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Search Members',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0), 
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0), 
+                  borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0), // Rounded corners
+                  borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      body: ListView.builder(
+        itemCount: filteredMembers.length,
+        itemBuilder: (context, index) {
+          final member = filteredMembers[index];
+          return ListTile(
+            leading: CircleAvatar(
+              radius: 18,
+              // backgroundImage: member.profileImg.image,
+            ),
+            title: Row(
+              children: [
+                Text("${member.name}"),
+              ],
             ),
           );
         },
